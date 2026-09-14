@@ -33,3 +33,23 @@ the board (via Thonny or `mpremote`).
 - SDA: GPIO _
 - SCL: GPIO _
 - I2C address: 0x__
+
+
+cd pico
+pip install micropython-rp2-stubs --target ./typings
+
+## To-Do
+
+- [x] Set up Git repo and collaborator access
+- [ ] Calibrate HSV ranges for final lighting conditions
+- [ ] Specify depth handling for HSV vector mapping (map detected pixel/contour position to real-world depth/coordinates)
+- [ ] Write inverse kinematics (IK) maths for the 4DOF arm
+- [ ] Implement IK code (translate target coordinates into servo angles)
+- [ ] Test I2C communication between Pi 3B and Pico
+- [ ] Explore UART as an alternative to I2C for Pi–Pico comms
+- [ ] Write servo control logic for gripper
+- [ ] Integrate colour detection output with arm movement
+- [ ] Add reset code (return arm to home/safe position)
+- [ ] Add error handling for camera not detected
+- [ ] Add debug LEDs for status/error reporting
+- [ ] Write debug/report output (logging system state, errors, detection results)

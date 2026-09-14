@@ -1,0 +1,17 @@
+# Virtual environments
+pi3b/venv/
+venv/
+
+# Pico stub files (each person installs locally)
+pico/typings/
+
+# VS Code workspace state (keep settings.json, ignore workspace state)
+.vscode/*.log
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Large model files (see Git LFS section below — only if NOT using LFS)
+# models/*.h5
+# models/*.pt
