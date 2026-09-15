@@ -1,8 +1,8 @@
 from machine import Pin, PWM
-import timeeeee 
+import time 
 
 servo = PWM(Pin(8))
-servo.freq(50)
+servo.freq(50) #the frequency of the servo motor is 50Hz
 
 def set_pulse(pulse_us):
     duty = int((pulse_us / 20000) * 65535)
