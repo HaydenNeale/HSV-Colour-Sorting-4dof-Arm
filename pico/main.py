@@ -13,7 +13,7 @@ CLOSED = 440 # your calibrated closed position
 
 print("Moving to open (920us)...")
 set_pulse(OPEN) #moving servo motor to open position
-time.sleep(2)
+time.sleep(2) #sleep for 2 seconds to allow the servo to reach open position
 
 print("Moving to closed (440us) and holding...")
 set_pulse(CLOSED) #moving servo motor to closed position
