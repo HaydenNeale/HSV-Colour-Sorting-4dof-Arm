@@ -29,6 +29,14 @@ pip install -r requirements.txt
 Flash MicroPython firmware, then copy `pico/main.py` and `pico/lib/` onto
 the board (via Thonny or `mpremote`).
 
+| Variable Name                                        | GPIO Pin | Physical Pin | Wire Color / Joint    |
+| :--------------------------------------------------- | :------- | :----------- | :-------------------- |
+| <span style="color:gold">`yellow_claw`</span>        | **GP8**  | Pin 11       | 🟨 Yellow (Claw)      |
+| <span style="color:white">`white_mid_claw`</span>    | **GP9**  | Pin 12       | ⬜ White (Mid Claw)    |
+| <span style="color:orange">`orange_claw_base`</span> | **GP10** | Pin 14       | 🟧 Orange (Claw Base) |
+| <span style="color:green">`green_truebase`</span>    | **GP11** | Pin 15       | 🟩 Green (Truebase)   |
+
+
 ## Wiring / I2C
 - SDA: GPIO _
 - SCL: GPIO _
