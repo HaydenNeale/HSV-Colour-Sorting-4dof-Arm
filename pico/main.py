@@ -11,7 +11,7 @@ Mid_Claw_angle = 0 #initial angle of the mid claw servo motor
 Claw_base_angle = 0 #initial angle of the claw base servo motor
 Truebase_angle = 0 #initial angle of the true base servo motor
 
-# varible grouping for Bulk use 
+# variable grouping for Bulk use 
 servo_Motors = [Claw, Mid_Claw, Claw_base, Truebase] #grouping all the servo motors into a list for easy access
 # setting up servo channels to 50Hz frequency
 for s in servo_Motors:
