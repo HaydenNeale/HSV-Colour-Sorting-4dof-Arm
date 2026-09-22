@@ -5,35 +5,31 @@ Coordinate frame, measured from the BASE ROTATION AXIS:
     x = forward, away from the robot   (cm)
     y = left of the robot              (cm)   [positive y = target is to the arm's left]
     z = up, measured from the SAME HEIGHT as the base rotation axis (cm)
-        (to place a real-world target: table height = base housing height + z)
 
-Link lengths (your measurements, not the old reference code's numbers):
-    L0 = 4 cm    base rotation axis -> shoulder joint (fixed, vertical, doesn't tilt)
+Link lengths:
+    L0 = 4 cm    base rotation axis -> shoulder joint
     L1 = 8 cm    shoulder -> elbow
-    L2 = 7 cm    elbow -> wrist
-    CLAW = 5 cm  wrist -> gripper grasp point (assumed collinear with L2 -- verify
-                 this, if the claw mounts at even a slight angle it needs its own offset)
-
-CALIBRATION -- measured with a protractor at commanded angle = 90 on every joint
-(the arm's physical "position zero"):
+    L2 = 10 cm   elbow -> claw center (7 cm link + 3 cm claw)
 """
 
 import math
 
 # ---------------------------------------------------------------------------
-# MEASURED CONSTANTS -- update these as you confirm/correct them
+# MEASURED CONSTANTS & CALIBRATION OFFSETS
 # ---------------------------------------------------------------------------
 L0 = 4.0
 L1 = 8.0
-L2 = 7.0 + 5.0  # wrist link + claw, assumed collinear -> effective reach
+L2 = 7.0 + 5.0  # 7cm elbow-to-wrist + 5cm wrist-to-claw-End/Grippy part
 
-BASE_OFFSET_DEG = 3.0          # heading is 3 deg off "straight forward" at commanded 90
-SHOULDER_FROM_VERTICAL_AT_ZERO = 30.0   # shoulder link's angle from vertical at commanded 90
-ELBOW_INTERIOR_AT_ZERO = 160.0          # PLACEHOLDER -- confirm with a direct protractor
-                                         # reading between L1 and L2 at commanded 90
+# Claw vertical offset (cm above main arm axis)
+CLAW_Z_OFFSET = 1
 
-# If a joint moves the WRONG direction relative to what solve_ik expects, flip
-# its sign here instead of hunting through the math below.
+# Joint Angle Calibration
+BASE_OFFSET_DEG = 0               # Base servo offset from straight ahead
+SHOULDER_FROM_VERTICAL_AT_ZERO = 0 # Adjusted offset: shoulder is 10 deg from vertical at servo angle 90
+ELBOW_INTERIOR_AT_ZERO = 40         # Interior angle between L1 and L2 at servo angle 90
+
+# Joint Direction Multipliers (set to -1 if joint moves in reverse)
 BASE_SIGN = 1
 SHOULDER_SIGN = 1
 ELBOW_SIGN = 1
@@ -49,36 +45,34 @@ def solve_ik(x, y, z):
     """
     Target point (x, y, z) in cm, relative to the base rotation axis.
     Returns (base_cmd, shoulder_cmd, elbow_cmd) as servo commands in degrees (0-180).
-    Raises ValueError if the point is out of reach.
     """
-    # Step 1: base rotation (azimuth)
+    # Step 1: Base rotation angle (azimuth)
     theta_base = math.degrees(math.atan2(y, x))
     base_cmd = clamp(90.0 + BASE_SIGN * (theta_base + BASE_OFFSET_DEG))
 
-    # Step 2: collapse to the 2D shoulder/elbow plane
-    r = math.hypot(x, y)          # horizontal distance from base axis
-    h = z - L0                    # height above the shoulder joint
-    D = math.hypot(r, h)          # straight-line distance, shoulder -> target
+    # Step 2: Plane projection and height offset adjustment
+    r = math.hypot(x, y)                  # Horizontal distance from base center
+    h = (z - CLAW_Z_OFFSET) - L0          # Height relative to shoulder joint
+    D = math.hypot(r, h)                  # Direct distance from shoulder to target
 
     reach_min, reach_max = abs(L1 - L2), L1 + L2
     if not (reach_min <= D <= reach_max):
         raise ValueError(
-            f"Target unreachable: D={D:.2f}cm, reachable range is "
-            f"{reach_min:.2f}cm to {reach_max:.2f}cm"
+            f"Target unreachable: D={D:.2f}cm. Reachable range: {reach_min:.2f}cm to {reach_max:.2f}cm"
         )
 
-    # Step 3: elbow interior angle, law of cosines (180 = fully straight)
+    # Step 3: Elbow interior angle (Law of Cosines)
     cos_elbow = (L1**2 + L2**2 - D**2) / (2 * L1 * L2)
     theta_elbow = math.degrees(math.acos(cos_elbow))
 
-    # Step 4: shoulder angle
+    # Step 4: Shoulder angle relative to horizon and vertical
     phi = math.degrees(math.atan2(h, r))
     cos_beta = (L1**2 + D**2 - L2**2) / (2 * L1 * D)
     beta = math.degrees(math.acos(cos_beta))
-    shoulder_from_horizontal = phi + beta          # elbow-up solution
+    shoulder_from_horizontal = phi + beta
     shoulder_from_vertical = 90.0 - shoulder_from_horizontal
 
-    # Step 5: apply calibration to get real servo commands
+    # Step 5: Convert to servo command angles using 10.0 degree zero offset
     shoulder_cmd = clamp(
         90.0 + SHOULDER_SIGN * (shoulder_from_vertical - SHOULDER_FROM_VERTICAL_AT_ZERO)
     )
@@ -91,9 +85,7 @@ def solve_ik(x, y, z):
 
 def forward_kinematics(base_cmd, shoulder_cmd, elbow_cmd):
     """
-    Reverse of solve_ik -- given servo commands, compute where the end effector
-    actually lands. Use this to sanity-check IK output against a ruler
-    measurement on the real arm before trusting it.
+    Reverse kinematic calculation to verify resulting target (x, y, z).
     """
     theta_base = BASE_SIGN * (base_cmd - 90.0) - BASE_OFFSET_DEG
 
@@ -109,18 +101,20 @@ def forward_kinematics(base_cmd, shoulder_cmd, elbow_cmd):
 
     r = D * math.cos(math.radians(phi))
     h = D * math.sin(math.radians(phi))
-    z = h + L0
+    z = h + L0 + CLAW_Z_OFFSET
     x = r * math.cos(math.radians(theta_base))
     y = r * math.sin(math.radians(theta_base))
     return x, y, z
 
 
 if __name__ == "__main__":
-    # Suggested first calibration target -- see chat for how to set this up physically.
-    test_point = (12.0, 0.0, 5.0)  # cm: straight ahead, mid-reach, easy to measure to
+    # Test coordinates in cm
+    test_point = (8.0, 1.0, 10.0)
 
-    base_cmd, shoulder_cmd, elbow_cmd = solve_ik(*test_point)
-    print(f"Target (x,y,z):        {test_point}")
-    print(f"Servo commands:        base={base_cmd:.1f}  shoulder={shoulder_cmd:.1f}  elbow={elbow_cmd:.1f}")
-    print(f"FK round-trip check:   {tuple(round(v, 2) for v in forward_kinematics(base_cmd, shoulder_cmd, elbow_cmd))}")
-    print("^ this should equal the target above almost exactly -- if it doesn't, there's an algebra bug, not a calibration issue")
+    try:
+        base_cmd, shoulder_cmd, elbow_cmd = solve_ik(*test_point)
+        print(f"Target (x, y, z):      {test_point}")
+        print(f"Servo commands:        base={base_cmd:.1f}  shoulder={shoulder_cmd:.1f}  elbow={elbow_cmd:.1f}")
+        print(f"FK Round-trip Check:   {tuple(round(v, 2) for v in forward_kinematics(base_cmd, shoulder_cmd, elbow_cmd))}")
+    except ValueError as e:
+        print(e)
