@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
 
 # -----------------------------------------------------------------------
 # CALIBRATION PARAMETERS (EASILY INTERCHANGEABLE)
@@ -128,20 +129,12 @@ def send_to_ik_solver(color, target_x, target_y, target_z):
     """
     Placeholder function for your IK solver / motor controller.
     """
-    # Example approach offset: target 2 cm above the block before gripping
     GRIPPER_PITCH = -90.0  # degrees (pointing straight down)
     APPROACH_Z = target_z + 0.02
 
     print(f"[IK SOLVER] Planning trajectory for {color} block...")
     print(f"            Target Pose: X={target_x:.3f}m, Y={target_y:.3f}m, Z={target_z:.3f}m")
     print(f"            Approach Z : {APPROACH_Z:.3f}m, Pitch={GRIPPER_PITCH}°")
-    
-    # --- ADD YOUR IK CODE HERE ---
-    # Example:
-    # joint_angles = ik.compute(target_x, target_y, target_z, pitch=GRIPPER_PITCH)
-    # robot_arm.move_joints(joint_angles)
-    # robot_arm.close_gripper()
-    # -----------------------------
 
 print("\n--- RUNNING IK INTEGRATION ---")
 for target in target_blocks:
@@ -149,8 +142,23 @@ for target in target_blocks:
     send_to_ik_solver(target["color"], bx, by, bz)
 
 # -----------------------------------------------------------------------
-# SHOW IMAGE
+# DISPLAY AND SAVE IMAGE OUTPUT
 # -----------------------------------------------------------------------
+
+# Option 1: Save output image file to disk
+save_path = "output_detected.jpg"
+cv2.imwrite(save_path, output)
+print(f"\n[INFO] Marked image saved to: {save_path}")
+
+# Option 2: Render in Matplotlib (Ideal for Jupyter / Python Notebooks)
+img_rgb = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
+plt.figure(figsize=(10, 6))
+plt.imshow(img_rgb)
+plt.title("Detected Objects with Depth & Coordinates")
+plt.axis("off")
+plt.show()
+
+# Option 3: Standard OpenCV Window
 cv2.imshow("Marked Objects with Depth", output)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
