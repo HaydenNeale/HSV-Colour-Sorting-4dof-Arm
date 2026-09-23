@@ -109,7 +109,7 @@ def forward_kinematics(base_cmd, shoulder_cmd, elbow_cmd):
 
 if __name__ == "__main__":
     # Test coordinates in cm
-    test_point = (8.0, 1.0, 10.0)
+    test_point = (11.8, -0.7, 4)
 
     try:
         base_cmd, shoulder_cmd, elbow_cmd = solve_ik(*test_point)
