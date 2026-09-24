@@ -1,5 +1,5 @@
 """
-4-DOF Robotic Arm - Inverse Kinematics Solver
+4-DOF Robotic Arm - Inverse Kinematics solver
 ================================================
 Coordinate frame, measured from the BASE ROTATION AXIS:
     x = forward, away from the robot   (cm)
@@ -41,7 +41,7 @@ def clamp(angle):
     return max(SERVO_MIN, min(SERVO_MAX, angle))
 
 
-def solve_ik(x, y, z):
+def solver(x, y, z):
     """
     Target point (x, y, z) in cm, relative to the base rotation axis.
     Returns (base_cmd, shoulder_cmd, elbow_cmd) as servo commands in degrees (0-180).
@@ -83,7 +83,7 @@ def solve_ik(x, y, z):
     return base_cmd, shoulder_cmd, elbow_cmd
 
 
-def forward_kinematics(base_cmd, shoulder_cmd, elbow_cmd):
+def fk(base_cmd, shoulder_cmd, elbow_cmd):
     """
     Reverse kinematic calculation to verify resulting target (x, y, z).
     """
@@ -112,9 +112,9 @@ if __name__ == "__main__":
     test_point = (11.8, -0.7, 4)
 
     try:
-        base_cmd, shoulder_cmd, elbow_cmd = solve_ik(*test_point)
+        base_cmd, shoulder_cmd, elbow_cmd = solver(*test_point)
         print(f"Target (x, y, z):      {test_point}")
         print(f"Servo commands:        base={base_cmd:.1f}  shoulder={shoulder_cmd:.1f}  elbow={elbow_cmd:.1f}")
-        print(f"FK Round-trip Check:   {tuple(round(v, 2) for v in forward_kinematics(base_cmd, shoulder_cmd, elbow_cmd))}")
+        print(f"FK Round-trip Check:   {tuple(round(v, 2) for v in fk(base_cmd, shoulder_cmd, elbow_cmd))}")
     except ValueError as e:
         print(e)
