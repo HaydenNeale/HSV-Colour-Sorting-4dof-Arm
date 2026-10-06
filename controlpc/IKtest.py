@@ -9,7 +9,7 @@ Coordinate frame, measured from the BASE ROTATION AXIS:
 Link lengths:
     L0 = 4 cm    base rotation axis -> shoulder joint
     L1 = 8 cm    shoulder -> elbow
-    L2 = 10 cm   elbow -> claw center (7 cm link + 3 cm claw)
+    L2 = 10 cm   elbow -> claw center (7 cm link + 3 cm claw) if i add here maybe it will let me PUSH TO GIT 
 """
 
 import math
