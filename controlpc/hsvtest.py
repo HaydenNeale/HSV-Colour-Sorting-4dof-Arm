@@ -26,8 +26,8 @@ IMAGE_PATH = str(SCRIPT_DIR / "detect_photo.jpg")   # <-- point this at the phot
 
 COLOR_RANGES = {
     "Red": [
-        (np.array([0, 130, 90]), np.array([10, 255, 255])),
-        (np.array([170, 130, 90]), np.array([179, 255, 255])),
+    (np.array([0, 70, 40]), np.array([10, 255, 255])),
+    (np.array([170, 70, 40]), np.array([179, 255, 255])),
     ],
     "Blue": [(np.array([95, 120, 80]), np.array([130, 255, 255]))],
     "Green": [(np.array([45, 80, 60]), np.array([85, 255, 255]))],
