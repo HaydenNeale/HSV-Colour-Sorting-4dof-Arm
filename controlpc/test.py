@@ -56,7 +56,7 @@ except ImportError:
 # ---------------------------------------------------------------------------
 # SETTINGS (edit these)
 # ---------------------------------------------------------------------------
-PORT = "COM10"
+PORT = "COM13"
 BAUD = 115200
 
 JOINTS = ["Claw", "Elbow", "Shoulder", "Base"]      # order sent to the Pico

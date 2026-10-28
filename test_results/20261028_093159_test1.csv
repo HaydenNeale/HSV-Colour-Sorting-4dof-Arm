@@ -1,0 +1,6 @@
+check,result,detail
+Move command returns DONE,PASS,0.021 s
+No-motion command returns DONE (10/10),PASS,"10/10, mean 12.1 ms, min 10.6, max 21.1 ms"
+Non-numeric line -> LOG: message,PASS,LOG: Invalid serial command format.
+3-value line is ignored (no reply),PASS,no reply
+Pico alive after invalid input,PASS,

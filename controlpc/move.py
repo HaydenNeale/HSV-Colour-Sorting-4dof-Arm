@@ -39,7 +39,7 @@ try:
 except ImportError:
     serial = None
 
-PORT = "COM10"
+PORT = "COM13"
 BAUD = 115200
 DONE_TIMEOUT_S = 15.0
 HOVER_CM = 4.0          # same hover height main.py uses above a block
