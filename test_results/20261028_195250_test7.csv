@@ -1,0 +1,17 @@
+meter_location,step_fraction,phase,reading,current_mA,rail_V,peak_mA,move_time_s,largest_move_deg,ticks
+0.07,0,home_baseline,1,0.07,5.0,,,0,0
+0.07,0,home_baseline,2,0.07,5.0,,,0,0
+0.07,0,home_baseline,3,0.07,5.0,,,0,0
+0.07,0,home_baseline,4,0.07,5.0,,,0,0
+0.07,0,home_baseline,5,0.07,5.0,,,0,0
+0.07,0.25,move_out_peak,,,,0.1,0.508,45,23
+0.07,0.25,move_back_peak,,,,0.1,0.500,45,23
+0.07,0.25,hold_at_home,1,0.06,,0.1,0.500,45,23
+0.07,0.5,move_out_peak,,,,0.22,0.965,90,45
+0.07,0.5,move_back_peak,,,,0.2,0.959,90,45
+0.07,0.75,move_out_peak,,,,0.3,1.445,135,68
+0.07,0.75,move_back_peak,,,,0.15,1.459,135,68
+0.07,0.75,hold_at_home,1,0.07,5.0,0.15,1.459,135,68
+0.07,1.0,move_out_peak,,,,0.51,1.916,180,90
+0.07,1.0,hold_at_pose,1,0.1,5.0,0.51,1.916,180,90
+0.07,1.0,move_back_peak,,,,0.07,1.915,180,90
